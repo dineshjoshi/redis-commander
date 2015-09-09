@@ -99,7 +99,7 @@ myUtils.getConfig(function (err, config) {
       };
 
       if (!myUtils.containsConnection(config.default_connections, newDefault)) {
-        var client = redis.createClient(newDefault.port, newDefault.host);
+        var client = redis.createClient(newDefault.port, newDefault.host, {detect_buffers : true});
         client.label = newDefault.label;
         redisConnections.push(client);
         if (args['redis-password']) {
@@ -124,7 +124,7 @@ myUtils.getConfig(function (err, config) {
       if (db == null || isNaN(db)) {
         db = 0
       }
-      redisConnections.push(redis.createClient());
+      redisConnections.push(redis.createClient(6379, '127.0.0.1', {detect_buffers : true}));
       setUpConnection(redisConnections.getLast(), db);
     }
   });
@@ -134,7 +134,7 @@ myUtils.getConfig(function (err, config) {
 function startDefaultConnections (connections, callback) {
   if (connections) {
     connections.forEach(function (connection) {
-      var client = redis.createClient(connection.port, connection.host);
+      var client = redis.createClient(connection.port, connection.host, {detect_buffers : true});
       client.label = connection.label;
       redisConnections.push(client);
       if (connection.password) {
